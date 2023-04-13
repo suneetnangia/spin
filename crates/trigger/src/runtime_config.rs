@@ -10,7 +10,8 @@ const DEFAULT_LOGS_DIR: &str = "logs";
 
 const SPIN_CONFIG_ENV_PREFIX: &str = "SPIN_CONFIG";
 
-const DEFAULT_SQLITE_DB_FILENAME: &str = "sqlite_key_value.db";
+const DEFAULT_KV_SQLITE_DB_FILENAME: &str = "sqlite_key_value.db";
+const DEFAULT_SQLITE_DB_FILENAME: &str = "sqlite.db";
 
 /// RuntimeConfig allows multiple sources of runtime configuration to be
 /// queried uniformly.
@@ -109,11 +110,21 @@ impl RuntimeConfig {
         }
     }
 
-    /// Return a path to the sqlite DB if set.
+    /// Return a path to the sqlite DB used for key value storage if set.
     pub fn sqlite_db_path(&self) -> Option<PathBuf> {
         if let Some(state_dir) = self.state_dir() {
             // If the state dir is set, build the default path
             Some(state_dir.join(DEFAULT_SQLITE_DB_FILENAME))
+        } else {
+            None
+        }
+    }
+
+    /// Return a path to the sqlite DB used for sqlite storage if set.
+    pub fn key_value_sqlite_db_path(&self) -> Option<PathBuf> {
+        if let Some(state_dir) = self.state_dir() {
+            // If the state dir is set, build the default path
+            Some(state_dir.join(DEFAULT_KV_SQLITE_DB_FILENAME))
         } else {
             None
         }
@@ -176,7 +187,7 @@ mod tests {
 
         assert_eq!(config.state_dir(), None);
         assert_eq!(config.log_dir(), None);
-        assert_eq!(config.sqlite_db_path(), None);
+        assert_eq!(config.key_value_sqlite_db_path(), None);
 
         Ok(())
     }
@@ -192,7 +203,7 @@ mod tests {
         let log_dir = config.log_dir().unwrap();
         assert!(log_dir.starts_with(&state_dir));
 
-        let sqlite_db_path = config.sqlite_db_path().unwrap();
+        let sqlite_db_path = config.key_value_sqlite_db_path().unwrap();
         assert!(sqlite_db_path.starts_with(&state_dir));
 
         Ok(())

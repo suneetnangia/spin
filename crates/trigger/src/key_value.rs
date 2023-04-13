@@ -16,7 +16,7 @@ use crate::{runtime_config::RuntimeConfig, TriggerHooks};
 pub(crate) fn build_key_value_component(
     runtime_config: &RuntimeConfig,
 ) -> Result<KeyValueComponent> {
-    let location = match runtime_config.sqlite_db_path() {
+    let location = match runtime_config.key_value_sqlite_db_path() {
         Some(path) => {
             // Create the store's parent directory if necessary
             create_parent_dir(&path).context("Failed to create key value store")?;
@@ -55,7 +55,7 @@ impl TriggerHooks for KeyValuePersistenceMessageHook {
         }) {
             return Ok(());
         }
-        if let Some(path) = runtime_config.sqlite_db_path() {
+        if let Some(path) = runtime_config.key_value_sqlite_db_path() {
             println!("Storing key-value data to {path:?}");
         } else {
             println!("Using in-memory key-value store; data will not be saved!");
