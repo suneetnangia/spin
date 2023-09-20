@@ -16,7 +16,7 @@ spin-app = { path = "../app" }
 spin-core = { path = "../core" }
 spin-trigger = { path = "../trigger" }
 spin-world = { path = "../world" }
-paho-mqtt = { version = "0.12" }
+paho-mqtt = { version = "0.12.2", default-features = false, features = ["vendored-ssl"] }
 tracing = { workspace = true }
 
 [dev-dependencies]
